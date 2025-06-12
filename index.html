@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Grageas Mágicas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2.decorated-title, h3 {
+            font-family: 'Cinzel', serif;
+        }
+        .font-luckiest {
+            font-family: 'Luckiest Guy', cursive;
+        }
+        /* Estilo para la barra de desplazamiento */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        .tab-btn.active {
+            border-color: #f59e0b; /* yellow-500 */
+            color: #f59e0b;
+            background-color: #374151; /* gray-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Columna de Configuración y Referencia -->
+        <div class="lg:col-span-1 flex flex-col gap-8">
+            <!-- Sección de Configuración -->
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                <h1 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Configuración</h1>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="cantidadGrageas" class="block mb-2 text-sm font-medium text-gray-300">Número de Grageas (Máx. 5):</label>
+                        <input type="number" id="cantidadGrageas" value="1" min="1" max="5" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full p-2.5">
+                    </div>
+                    
+                    <div id="grageasContainer" class="space-y-6">
+                        <!-- Los selectores de grageas se insertarán aquí -->
+                    </div>
+                    
+                    <button id="abrirBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
+                        ✨ Abrir Grageas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sección de Sabores Disponibles -->
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                <h2 class="text-2xl font-bold text-yellow-400 mb-4 text-center decorated-title">Sabores Disponibles</h2>
+                <div id="saboresList" class="max-h-80 overflow-y-auto pr-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                    <!-- La lista de sabores se insertará aquí -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna de Resultados -->
+        <div class="lg:col-span-2">
+            <div class="bg-black p-6 rounded-2xl shadow-lg border border-gray-700 h-full flex flex-col">
+                <!-- Pestañas para cambiar de vista -->
+                <div class="flex border-b border-gray-700 mb-4">
+                    <button id="tabDecorado" class="tab-btn active py-2 px-4 border-b-2 font-medium transition-colors duration-300">Decorado</button>
+                    <button id="tabSimple" class="tab-btn py-2 px-4 border-b-2 border-transparent font-medium text-gray-400 hover:text-yellow-400 transition-colors duration-300">Simple</button>
+                </div>
+
+                <!-- Contenedor de Resultados Decorados (visible por defecto) -->
+                <div id="panelDecorado" class="flex flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-yellow-400 decorated-title">Resultados</h2>
+                        <button id="copiarBtnDecorado" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-medium py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>
+                            Copiar Decorado
+                        </button>
+                    </div>
+                    <div class="relative flex-grow">
+                        <textarea id="resultadoTextoDecorado" readonly class="w-full h-full bg-black text-white font-mono p-4 rounded-md border border-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500"></textarea>
+                    </div>
+                </div>
+
+                <!-- Contenedor de Resultados Simples (oculto por defecto) -->
+                <div id="panelSimple" class="hidden flex-col flex-grow">
+                     <div class="flex justify-end items-center mb-4">
+                        <button id="copiarBtnSimple" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-medium py-2 px-4 rounded-lg transition duration-300 ease-in-out flex items-center gap-2">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>
+                            Copiar Simple
+                        </button>
+                    </div>
+                    <div id="resultadoTextoSimpleContainer" class="w-full h-full bg-black text-white p-4 rounded-md border border-gray-600 overflow-y-auto">
+                        <h2 id="simpleTitle" class="text-4xl text-white font-luckiest tracking-wider mb-6"></h2>
+                        <div id="resultadoTextoSimple" style="white-space: pre-wrap; font-family: 'Inter', sans-serif; font-size: 1.1rem; line-height: 2;"></div>
+                    </div>
+                </div>
+
+                <!-- Mensaje de Copiado -->
+                <div id="copiadoMsg" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white px-6 py-3 rounded-lg text-lg opacity-0 transition-opacity duration-500 pointer-events-none">
+                    ¡Texto Copiado!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DATOS ---
+            const sabores = [
+                { "tipo": "Aceitunas", "emoji": "🫒" }, { "tipo": "Ajo crudo", "emoji": "🧄" }, { "tipo": "Alga marina", "emoji": "🪸" },
+                { "tipo": "Aliento de dragón", "emoji": "🐉🌬️" }, { "tipo": "Aliento de ogro", "emoji": "🧌" }, { "tipo": "Algodón de azúcar", "emoji": "🍭" },
+                { "tipo": "Arándanos", "emoji": "🫐" }, { "tipo": "Baba de caracol", "emoji": "🐌" }, { "tipo": "Bellini", "emoji": "🥂" },
+                { "tipo": "Biberón", "emoji": "🍼" }, { "tipo": "Blody Mary", "emoji": "🫗🩸" }, { "tipo": "Burrito", "emoji": "🌯" },
+                { "tipo": "Cacahuate", "emoji": "🥜" }, { "tipo": "Caña de azúcar", "emoji": "🎋" }, { "tipo": "Canela en polvo", "emoji": "🍂" },
+                { "tipo": "Cáscara de plátano", "emoji": "🍌" }, { "tipo": "Café frío", "emoji": "☕" }, { "tipo": "Café quemado", "emoji": "☕🔥" },
+                { "tipo": "Caldo de murciélago", "emoji": "🦇🍲" }, { "tipo": "Cebolla caramelizada", "emoji": "🧅" }, { "tipo": "Cereza", "emoji": "🍒" },
+                { "tipo": "Cerveza", "emoji": "🍺" }, { "tipo": "Chicle de menta", "emoji": "🍬" }, { "tipo": "Chorizo", "emoji": "🥩" },
+                { "tipo": "Cítricos", "emoji": "🍋" }, { "tipo": "Coco", "emoji": "🥥" }, { "tipo": "Cóctel", "emoji": "🍸" },
+                { "tipo": "Coliflor cruda", "emoji": "🥦" }, { "tipo": "Cera de oído", "emoji": "👂" }, { "tipo": "Champaña", "emoji": "🥂" },
+                { "tipo": "Chocolate", "emoji": "🍫" }, { "tipo": "Cupcake", "emoji": "🧁" }, { "tipo": "Donas", "emoji": "🍩" },
+                { "tipo": "Dumpling", "emoji": "🥟" }, { "tipo": "Durazno", "emoji": "🍑" }, { "tipo": "Ensalada", "emoji": "🥗" },
+                { "tipo": "Esencia de mandrágora", "emoji": "🌱" }, { "tipo": "Espinaca cocida", "emoji": "🍲" }, { "tipo": "Espuma de mar", "emoji": "🌊" },
+                { "tipo": "Estiércol de dragón", "emoji": "🐉💩" }, { "tipo": "Flor de cactus", "emoji": "🌵" }, { "tipo": "Frutilla", "emoji": "🍓" },
+                { "tipo": "Galleta de avena", "emoji": "🍪" }, { "tipo": "Gelatina de sapo", "emoji": "🐸" }, { "tipo": "Guisado", "emoji": "🍛" },
+                { "tipo": "Guisantes triturados", "emoji": "🫛" }, { "tipo": "Helado de calabaza", "emoji": "🎃" }, { "tipo": "Helado de vainilla", "emoji": "🍨" },
+                { "tipo": "Hielo", "emoji": "🧊" }, { "tipo": "Hojas secas", "emoji": "🍁" }, { "tipo": "Hueso dragón tostado", "emoji": "🦴" },
+                { "tipo": "Huevo frito", "emoji": "🍳" }, { "tipo": "Huevo podrido", "emoji": "🥚" }, { "tipo": "Jarabe de arce", "emoji": "🍯" },
+                { "tipo": "Jugo de pepino", "emoji": "🥒" }, { "tipo": "Kiwi", "emoji": "🥝" }, { "tipo": "Leche", "emoji": "🐮" },
+                { "tipo": "Leche caducada", "emoji": "🥛" }, { "tipo": "Leche podrida", "emoji": "🧋" }, { "tipo": "Manteca de maní", "emoji": "🥜" },
+                { "tipo": "Manteca rancia", "emoji": "🧈" }, { "tipo": "Margarita", "emoji": "🍸" }, { "tipo": "Martini", "emoji": "🍸" },
+                { "tipo": "Mate", "emoji": "🧉" }, { "tipo": "Menta", "emoji": "🌿" }, { "tipo": "Mezcla de hongos", "emoji": "🍄" },
+                { "tipo": "Mermelada de escarabajo", "emoji": "🪲" }, { "tipo": "Moco", "emoji": "🦠" }, { "tipo": "Naruto", "emoji": "🍥" },
+                { "tipo": "Negroni", "emoji": "🥃" }, { "tipo": "Onigiri", "emoji": "🍙" }, { "tipo": "Ostras vivas", "emoji": "🦪" },
+                { "tipo": "Pan con hongos", "emoji": "🫓" }, { "tipo": "Papas fritas", "emoji": "🍟" }, { "tipo": "Pasta de dientes", "emoji": "🪥" },
+                { "tipo": "Pasta pegajosa", "emoji": "🍝" }, { "tipo": "Pastel", "emoji": "🍰" }, { "tipo": "Pepino", "emoji": "🥒" },
+                { "tipo": "Picante", "emoji": "🌶️" }, { "tipo": "Pie de manzana", "emoji": "🥧" }, { "tipo": "Pimiento asado", "emoji": "🫑" },
+                { "tipo": "Piña colada", "emoji": "🍹" }, { "tipo": "Pizza", "emoji": "🍕" }, { "tipo": "Pollo asado", "emoji": "🍗" },
+                { "tipo": "Polvos mágicos", "emoji": "✨" }, { "tipo": "Pudín", "emoji": "🍮" }, { "tipo": "Queso mohoso", "emoji": "🧀" },
+                { "tipo": "Raíz de mandrágora", "emoji": "🌱" }, { "tipo": "Ron añejo", "emoji": "🍾" }, { "tipo": "Sal marina", "emoji": "🧂" },
+                { "tipo": "Sandía", "emoji": "🍉" }, { "tipo": "Sangre", "emoji": "🩸" }, { "tipo": "Sangre de unicornio", "emoji": "🦄" },
+                { "tipo": "Sangre de unicornio oxidada", "emoji": "🦄" }, { "tipo": "Sardinas enlatadas", "emoji": "🐟" }, { "tipo": "Sexo en la playa", "emoji": "🥃🏖️" },
+                { "tipo": "Soju", "emoji": "🍶" }, { "tipo": "Sopa de pescado", "emoji": "🍵" }, { "tipo": "Sopa de pescado en mal estado", "emoji": "🍵" },
+                { "tipo": "Spaguetti", "emoji": "🍝" }, { "tipo": "Sudor", "emoji": "💦" }, { "tipo": "Sudor de troll", "emoji": "🧟‍♂️💦" },
+                { "tipo": "Sushi", "emoji": "🍣" }, { "tipo": "Tacos", "emoji": "🌮" }, { "tipo": "Tinta de pulpo", "emoji": "🐙" },
+                { "tipo": "Trigo seco", "emoji": "🌾" }, { "tipo": "Tronco podrido", "emoji": "🪵" }, { "tipo": "Tocino", "emoji": "🥓" },
+                { "tipo": "Vino", "emoji": "🍷" }, { "tipo": "Vómito", "emoji": "🤮" }, { "tipo": "Waffles", "emoji": "🧇" }, { "tipo": "Whisky", "emoji": "🥃" }
+            ];
+
+            const efectos = [
+                "+10.000 puntos", "+8.000 puntos", "+5.000 puntos", "🪙 +10.000 Galeones", "🪙 +8.000 Galeones", "🪙 +7.000 Galeones",
+                "🪙 +5.000 Galeones", "🪙 +3.000 Galeones", "🪙 +2.000 Galeones", "🪙 +1.500 Galeones", "🪙 +1.000 Galeones", "🪙 +800 Galeones",
+                "🪙 +700 Galeones", "🪙 +600 Galeones", "🪙 +500 Galeones", "-10.000 puntos", "-8.000 puntos", "-7.000 puntos",
+                "-5.000 puntos", "� -10.000 Galeones", "🪙 -7.000 Galeones", "🪙 -5.000 Galeones", "🪙 -3.000 Galeones", "🪙 -2.000 Galeones",
+                "🪙 -1.500 Galeones", "🪙 -1.000 Galeones", "🪙 -900 Galeones", "🪙 -800 Galeones", "🪙 -700 Galeones", "🪙 -500 Galeones",
+                "Puedes robarle 10.000 puntos a alguien", "Puedes robarle 8.000 puntos a alguien", "Puedes robarle 5.000 puntos a alguien",
+                "Puedes robarle 10.000 Galeones a alguien del caldero", "Puedes restarle 5.000 puntos a un compañero",
+                "Puedes sumarle 5.000 puntos a un compañero", "Debes donar 10.000 Galeones a alguien del caldero",
+                "Debes donarle 5.000 Galeones a alguien", "Pierdes 2 objetos de tu inventario (a elección)",
+                "Pierdes 2 objetos de tu inventario (al azar)", "Pierdes 3 objetos de tu inventario", "+1 Gragea de todos los sabores 🫘",
+                "+2 Ranitas a elección 🐸🍫", "+3 Ranas a elección 🐸🍫", "+Ranita Amarilla 💛🍫", "+Ranita Verde 💚🍫", "+Ranita Roja ❤️🍫", "+Ranita Negra 🖤🍫",
+                "+Ranita Rosa 🩷🍫", "+Ranita Lila 💜🍫", "+Ranita Naranja 🧡🍫", "+Ranita Celeste 🩵🍫", "+Amortentia 🧪💘", "+Anillo de Morfin Gaunt 💍",
+                "+Carta Vociferadora 💌", "+Detonadores Trampa 🪤", "+El Desiluminador de Ron 💡", "+El giratiempo ⏱️", "+El Traslador 🔮",
+                "+Espejo de Oesed 🪞", "+Felix Felicis 🧪🍀", "+La pluma de Hermione 🪶", "+La Recordadora de Neville 🎱", "+Mapa del Merodeador 🗺️",
+                "+Nimbus 2000 🪽🧹", "+Pastillas Vomitivas 💊", "+Pergamino Mágico 📜", "+Saeta de Fuego 🔥🧹", "+Varita de Sauco 🪄💀",
+                "Tienes la posibilidad de elegir entre 2 cosas (ocultas)"
+            ];
+
+            // --- ELEMENTOS DEL DOM ---
+            const cantidadGrageasInput = document.getElementById('cantidadGrageas');
+            const grageasContainer = document.getElementById('grageasContainer');
+            const abrirBtn = document.getElementById('abrirBtn');
+            const resultadoTextoDecorado = document.getElementById('resultadoTextoDecorado');
+            const resultadoTextoSimple = document.getElementById('resultadoTextoSimple');
+            const simpleTitle = document.getElementById('simpleTitle');
+            const resultadoTextoSimpleContainer = document.getElementById('resultadoTextoSimpleContainer');
+            const copiarBtnDecorado = document.getElementById('copiarBtnDecorado');
+            const copiarBtnSimple = document.getElementById('copiarBtnSimple');
+            const saboresList = document.getElementById('saboresList');
+            const copiadoMsg = document.getElementById('copiadoMsg');
+            const tabDecorado = document.getElementById('tabDecorado');
+            const tabSimple = document.getElementById('tabSimple');
+            const panelDecorado = document.getElementById('panelDecorado');
+            const panelSimple = document.getElementById('panelSimple');
+
+            // --- FUNCIONES ---
+            
+            const generarSelectores = (cantidad) => {
+                grageasContainer.innerHTML = '';
+                for (let i = 1; i <= cantidad; i++) {
+                    const grageaDiv = document.createElement('div');
+                    grageaDiv.className = 'bg-gray-700 p-4 rounded-lg border border-gray-600';
+                    grageaDiv.innerHTML = `<h3 class="text-lg font-semibold text-yellow-300 mb-3">Gragea ${i}</h3>`;
+                    
+                    const selectorContainer = document.createElement('div');
+                    selectorContainer.className = 'space-y-2';
+
+                    for (let j = 1; j <= 3; j++) {
+                        const select = document.createElement('select');
+                        select.className = 'sabor-select w-full bg-gray-600 border border-gray-500 text-white text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 p-2';
+                        sabores.forEach(sabor => {
+                            const option = document.createElement('option');
+                            option.value = sabor.emoji;
+                            option.dataset.tipo = sabor.tipo; // Guardar el nombre del sabor
+                            option.textContent = `${sabor.emoji} ${sabor.tipo}`;
+                            select.appendChild(option);
+                        });
+                        selectorContainer.appendChild(select);
+                    }
+                    grageaDiv.appendChild(selectorContainer);
+                    grageasContainer.appendChild(grageaDiv);
+                }
+            };
+
+            const poblarListaSabores = () => {
+                saboresList.innerHTML = '';
+                sabores.forEach(sabor => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-gray-700 p-2 rounded-md';
+                    div.textContent = `${sabor.emoji} ${sabor.tipo}`;
+                    saboresList.appendChild(div);
+                });
+            };
+
+            const abrirGrageas = () => {
+                let resultadoDecorado = '⋆ ————————✧◦🍻◦✧———————— ⋆\n\n';
+                resultadoDecorado += '╰┈➤ ɢʀᴀɢᴇᴀ ᴅᴇ ᴛᴏᴅᴏꜱ ʟᴏꜱ ꜱᴀʙᴏʀᴇꜱ 🫘\n\n';
+                
+                let resultadoSimple = '';
+                let simpleCounter = 1;
+
+                const grageas = grageasContainer.children;
+                for (let i = 0; i < grageas.length; i++) {
+                    resultadoDecorado += `${i + 1}.\n`;
+
+                    const selects = grageas[i].querySelectorAll('.sabor-select');
+                    selects.forEach(select => {
+                        const emoji = select.value;
+                        const tipo = select.options[select.selectedIndex].dataset.tipo;
+                        const efectoAleatorio = efectos[Math.floor(Math.random() * efectos.length)];
+                        
+                        resultadoDecorado += `${emoji}→ ${efectoAleatorio}\n`;
+                        resultadoSimple += `${simpleCounter}. ${tipo}: ${efectoAleatorio}\n`;
+                        simpleCounter++;
+                    });
+                    resultadoDecorado += '\n';
+                }
+
+                resultadoDecorado += '⋆ ————————✧◦🍻◦✧———————— ⋆';
+                
+                resultadoTextoDecorado.value = resultadoDecorado.trim();
+
+                // Actualizar la vista simple
+                simpleTitle.textContent = 'RESULTADOS';
+                resultadoTextoSimple.innerText = resultadoSimple.trim();
+
+            };
+            
+            const copiarResultado = (viewType) => {
+                let textToCopy = '';
+                if (viewType === 'decorado') {
+                    textToCopy = document.getElementById('resultadoTextoDecorado').value;
+                } else if (viewType === 'simple') {
+                    const title = simpleTitle.textContent;
+                    const content = resultadoTextoSimple.innerText;
+                    textToCopy = `${title}\n\n${content}`;
+                }
+
+                if (!textToCopy) return;
+
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    copiadoMsg.classList.remove('opacity-0');
+                    setTimeout(() => {
+                        copiadoMsg.classList.add('opacity-0');
+                    }, 1500);
+                } catch (err) {
+                    console.error('Error al intentar copiar: ', err);
+                }
+                
+                document.body.removeChild(tempTextArea);
+                window.getSelection().removeAllRanges();
+            };
+
+            const cambiarPestaña = (tabActiva) => {
+                if (tabActiva === 'decorado') {
+                    panelDecorado.classList.remove('hidden');
+                    panelDecorado.classList.add('flex');
+                    panelSimple.classList.add('hidden');
+                    panelSimple.classList.remove('flex');
+
+                    tabDecorado.classList.add('active');
+                    tabSimple.classList.remove('active');
+                } else {
+                    panelSimple.classList.remove('hidden');
+                    panelSimple.classList.add('flex');
+                    panelDecorado.classList.add('hidden');
+                    panelDecorado.classList.remove('flex');
+
+                    tabSimple.classList.add('active');
+                    tabDecorado.classList.remove('active');
+                }
+            };
+
+            // --- EVENT LISTENERS ---
+            cantidadGrageasInput.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value, 10);
+                if (isNaN(val) || val < 1) val = 1;
+                if (val > 5) val = 5;
+                e.target.value = val;
+                generarSelectores(val);
+            });
+
+            abrirBtn.addEventListener('click', abrirGrageas);
+            copiarBtnDecorado.addEventListener('click', () => copiarResultado('decorado'));
+            copiarBtnSimple.addEventListener('click', () => copiarResultado('simple'));
+            
+            tabDecorado.addEventListener('click', () => cambiarPestaña('decorado'));
+            tabSimple.addEventListener('click', () => cambiarPestaña('simple'));
+
+            // --- INICIALIZACIÓN ---
+            poblarListaSabores();
