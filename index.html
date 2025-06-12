@@ -76,7 +76,7 @@
 
         <!-- Columna de Resultados -->
         <div class="lg:col-span-2">
-            <div class="bg-black p-6 rounded-2xl shadow-lg border border-gray-700 h-full flex flex-col">
+            <div class="bg-black p-6 rounded-2xl shadow-lg border border-gray-700 h-full flex flex-col min-h-[80vh] lg:min-h-0">
                 <!-- Pestañas para cambiar de vista -->
                 <div class="flex border-b border-gray-700 mb-4">
                     <button id="tabDecorado" class="tab-btn active py-2 px-4 border-b-2 font-medium transition-colors duration-300">Decorado</button>
@@ -174,7 +174,7 @@
                 "Puedes sumarle 5.000 puntos a un compañero", "Debes donar 10.000 Galeones a alguien del caldero",
                 "Debes donarle 5.000 Galeones a alguien", "Pierdes 2 objetos de tu inventario (a elección)",
                 "Pierdes 2 objetos de tu inventario (al azar)", "Pierdes 3 objetos de tu inventario", "+1 Gragea de todos los sabores 🫘",
-                "+2 Ranitas a elección 🐸🍫", "+3 Ranas a elección 🐸🍫", "+Ranita Amarilla 💛🍫", "+Ranita Verde 💚🍫", "+Ranita Roja ❤️🍫", "+Ranita Negra 🖤🍫",
+                "+2 Ranitas a elección 🐸🍫", "+3 Ranas a elección 🐸�", "+Ranita Amarilla 💛🍫", "+Ranita Verde 💚🍫", "+Ranita Roja ❤️🍫", "+Ranita Negra 🖤🍫",
                 "+Ranita Rosa 🩷🍫", "+Ranita Lila 💜🍫", "+Ranita Naranja 🧡🍫", "+Ranita Celeste 🩵🍫", "+Amortentia 🧪💘", "+Anillo de Morfin Gaunt 💍",
                 "+Carta Vociferadora 💌", "+Detonadores Trampa 🪤", "+El Desiluminador de Ron 💡", "+El giratiempo ⏱️", "+El Traslador 🔮",
                 "+Espejo de Oesed 🪞", "+Felix Felicis 🧪🍀", "+La pluma de Hermione 🪶", "+La Recordadora de Neville 🎱", "+Mapa del Merodeador 🗺️",
@@ -324,10 +324,19 @@
             };
 
             // --- EVENT LISTENERS ---
-            cantidadGrageasInput.addEventListener('input', (e) => {
+            
+            // FIX: Usar el evento 'change' en lugar de 'input' para mejor compatibilidad móvil.
+            // Este evento se dispara cuando el usuario termina de editar el campo.
+            cantidadGrageasInput.addEventListener('change', (e) => {
                 let val = parseInt(e.target.value, 10);
-                if (isNaN(val) || val < 1) val = 1;
-                if (val > 5) val = 5;
+                // Si el valor no es un número, es menor que 1, o está vacío, lo reseteamos a 1.
+                if (isNaN(val) || val < 1) {
+                    val = 1;
+                }
+                // Si el valor es mayor que 5, lo reseteamos a 5.
+                if (val > 5) {
+                    val = 5;
+                }
                 e.target.value = val;
                 generarSelectores(val);
             });
