@@ -163,24 +163,49 @@
                 { "tipo": "Vino", "emoji": "🍷" }, { "tipo": "Vómito", "emoji": "🤮" }, { "tipo": "Waffles", "emoji": "🧇" }, { "tipo": "Whisky", "emoji": "🥃" }
             ];
 
-            const efectos = [
+            // --- INICIO: CONFIGURACIÓN DE PROBABILIDADES (OCULTO) ---
+            
+            // 1. Separamos los efectos en categorías
+            const efectosBuenos = [
                 "+10.000 puntos", "+8.000 puntos", "+5.000 puntos", "🪙 +10.000 Galeones", "🪙 +8.000 Galeones", "🪙 +7.000 Galeones",
                 "🪙 +5.000 Galeones", "🪙 +3.000 Galeones", "🪙 +2.000 Galeones", "🪙 +1.500 Galeones", "🪙 +1.000 Galeones", "🪙 +800 Galeones",
-                "🪙 +700 Galeones", "🪙 +600 Galeones", "🪙 +500 Galeones", "-10.000 puntos", "-8.000 puntos", "-7.000 puntos",
-                "-5.000 puntos", "🪙 -10.000 Galeones", "🪙 -7.000 Galeones", "🪙 -5.000 Galeones", "🪙 -3.000 Galeones", "🪙 -2.000 Galeones",
-                "🪙 -1.500 Galeones", "🪙 -1.000 Galeones", "🪙 -900 Galeones", "🪙 -800 Galeones", "🪙 -700 Galeones", "🪙 -500 Galeones",
-                "Puedes robarle 10.000 puntos a alguien", "Puedes robarle 8.000 puntos a alguien", "Puedes robarle 5.000 puntos a alguien",
-                "Puedes robarle 10.000 Galeones a alguien del caldero", "Puedes restarle 5.000 puntos a un compañero",
-                "Puedes sumarle 5.000 puntos a un compañero", "Debes donar 10.000 Galeones a alguien del caldero",
+                "🪙 +700 Galeones", "🪙 +600 Galeones", "🪙 +500 Galeones", "Puedes robarle 10.000 puntos a alguien", "Puedes robarle 8.000 puntos a alguien", "Puedes robarle 5.000 puntos a alguien",
+                "Puedes robarle 10.000 Galeones a alguien del caldero", "Puedes sumarle 5.000 puntos a un compañero"
+            ];
+            const efectosMalos = [
+                "-10.000 puntos", "-8.000 puntos", "-7.000 puntos", "-5.000 puntos", "🪙 -10.000 Galeones", "🪙 -7.000 Galeones", "🪙 -5.000 Galeones", "🪙 -3.000 Galeones", "🪙 -2.000 Galeones",
+                "🪙 -1.500 Galeones", "🪙 -1.000 Galeones", "🪙 -900 Galeones", "🪙 -800 Galeones", "🪙 -700 Galeones", "� -500 Galeones",
+                "Puedes restarle 5.000 puntos a un compañero", "Debes donar 10.000 Galeones a alguien del caldero",
                 "Debes donarle 5.000 Galeones a alguien", "Pierdes 2 objetos de tu inventario (a elección)",
-                "Pierdes 2 objetos de tu inventario (al azar)", "Pierdes 3 objetos de tu inventario", "+1 Gragea de todos los sabores 🫘",
-                "+2 Ranitas a elección 🍫", "+3 Ranas a elección 🍫", "+Ranita Amarilla 💛🍫", "+Ranita Verde 💚🍫", "+Ranita Roja ❤️🍫", "+Ranita Negra 🖤🍫",
+                "Pierdes 2 objetos de tu inventario (al azar)", "Pierdes 3 objetos de tu inventario"
+            ];
+            const objetos = [
+                "+1 Gragea de todos los sabores 🫘", "+2 Ranitas a elección 🍫", "+3 Ranas a elección 🍫", "+Ranita Amarilla 💛🍫", "+Ranita Verde 💚🍫", "+Ranita Roja ❤️🍫", "+Ranita Negra 🖤🍫",
                 "+Ranita Rosa 🩷🍫", "+Ranita Lila 💜🍫", "+Ranita Naranja 🧡🍫", "+Ranita Celeste 🩵🍫", "+Amortentia 🧪💘", "+Anillo de Morfin Gaunt 💍",
                 "+Carta Vociferadora 💌", "+Detonadores Trampa 🪤", "+El Desiluminador de Ron 💡", "+El giratiempo ⏱️", "+El Traslador 🔮",
                 "+Espejo de Oesed 🪞", "+Felix Felicis 🧪🍀", "+La pluma de Hermione 🪶", "+La Recordadora de Neville 🎱", "+Mapa del Merodeador 🗺️",
                 "+Nimbus 2000 🪽🧹", "+Pastillas Vomitivas 💊", "+Pergamino Mágico 📜", "+Saeta de Fuego 🔥🧹", "+Varita de Sauco 🪄💀",
                 "Tienes la posibilidad de elegir entre 2 cosas (ocultas)"
             ];
+
+            // 2. Definimos las probabilidades iniciales y el factor de mejora
+            // probBuena: Probabilidad de un efecto bueno (0.0 a 1.0)
+            // probMala: Probabilidad de un efecto malo (0.0 a 1.0)
+            // probObjeto: Probabilidad de obtener un objeto (0.0 a 1.0)
+            // La suma de las tres debe ser 1.0
+            // factorMejora: Cuánto aumenta la probabilidad de un efecto bueno en cada giro (ej: 0.01 = 1%)
+            const configuracionProbabilidades = {
+                probBuena: 0.42, // 40% inicial
+                probMala: 0.38,  // 45% inicial
+                probObjeto: 0.20,// 15% inicial
+                factorMejora: 0.05 // Aumenta un 5% la prob. buena en cada giro
+            };
+
+            // 3. Contador de giros para mejorar las probabilidades
+            let contadorGiros = 0;
+
+            // --- FIN: CONFIGURACIÓN DE PROBABILIDADES ---
+
 
             // --- ELEMENTOS DEL DOM ---
             const cantidadGrageasInput = document.getElementById('cantidadGrageas');
@@ -237,6 +262,35 @@
                     saboresList.appendChild(div);
                 });
             };
+            
+            // Función para elegir un efecto basado en las probabilidades dinámicas
+            const elegirEfectoAleatorio = () => {
+                const { factorMejora } = configuracionProbabilidades;
+                
+                // Calculamos la probabilidad actual de un efecto bueno, aumentando con cada giro
+                let probBuenaActual = configuracionProbabilidades.probBuena + (contadorGiros * factorMejora);
+                // Nos aseguramos de que no supere el 95% para que siempre haya una pequeña chance de algo malo/objeto
+                probBuenaActual = Math.min(probBuenaActual, 0.95);
+
+                // Recalculamos las otras probabilidades para que la suma siga siendo 1
+                const probRestante = 1.0 - probBuenaActual;
+                const totalMalaYObjeto = configuracionProbabilidades.probMala + configuracionProbabilidades.probObjeto;
+                const probMalaActual = probRestante * (configuracionProbabilidades.probMala / totalMalaYObjeto);
+                const probObjetoActual = probRestante * (configuracionProbabilidades.probObjeto / totalMalaYObjeto);
+
+                // Generamos un número aleatorio entre 0 y 1
+                const aleatorio = Math.random();
+
+                // Decidimos qué tipo de efecto devolver
+                if (aleatorio < probBuenaActual) {
+                    return efectosBuenos[Math.floor(Math.random() * efectosBuenos.length)];
+                } else if (aleatorio < probBuenaActual + probMalaActual) {
+                    return efectosMalos[Math.floor(Math.random() * efectosMalos.length)];
+                } else {
+                    return objetos[Math.floor(Math.random() * objetos.length)];
+                }
+            };
+
 
             const abrirGrageas = () => {
                 let resultadoDecorado = '⋆ ————————✧◦🍻◦✧———————— ⋆\n\n';
@@ -253,7 +307,9 @@
                     selects.forEach(select => {
                         const emoji = select.value;
                         const tipo = select.options[select.selectedIndex].dataset.tipo;
-                        const efectoAleatorio = efectos[Math.floor(Math.random() * efectos.length)];
+                        
+                        // Usamos la nueva función para obtener un efecto
+                        const efectoAleatorio = elegirEfectoAleatorio();
                         
                         resultadoDecorado += `${emoji}→ ${efectoAleatorio}\n`;
                         resultadoSimple += `${simpleCounter}. ${tipo}: ${efectoAleatorio}\n`;
@@ -270,6 +326,8 @@
                 simpleTitle.textContent = 'RESULTADOS';
                 resultadoTextoSimple.innerText = resultadoSimple.trim();
 
+                // Incrementamos el contador de giros para la próxima vez
+                contadorGiros++;
             };
             
             const copiarResultado = (viewType) => {
@@ -325,20 +383,18 @@
 
             // --- EVENT LISTENERS ---
             
-            // FIX: Usar el evento 'change' en lugar de 'input' para mejor compatibilidad móvil.
-            // Este evento se dispara cuando el usuario termina de editar el campo.
             cantidadGrageasInput.addEventListener('change', (e) => {
                 let val = parseInt(e.target.value, 10);
-                // Si el valor no es un número, es menor que 1, o está vacío, lo reseteamos a 1.
                 if (isNaN(val) || val < 1) {
                     val = 1;
                 }
-                // Si el valor es mayor que 5, lo reseteamos a 5.
                 if (val > 5) {
                     val = 5;
                 }
                 e.target.value = val;
                 generarSelectores(val);
+                // Reseteamos el contador de giros si cambian la configuración
+                contadorGiros = 0; 
             });
 
             abrirBtn.addEventListener('click', abrirGrageas);
